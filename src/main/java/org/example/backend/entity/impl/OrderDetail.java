@@ -1,8 +1,6 @@
 package org.example.backend.entity.impl;
 
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,9 +14,14 @@ import java.io.Serializable;
 @Entity
 @Table(name = "order_details")
 public class OrderDetail implements SuperEntity {
-    @EmbeddedId
-    private String order_id;
-    private String item_id;
+    @Id
+    private String id;
+    @ManyToOne
+    @JoinColumn(name = "order_id",nullable = false)
+    private Order order_id;
+    @ManyToOne
+    @JoinColumn(name = "item_id",nullable = false)
+    private Item item_id;
     private int qty;
     private double unit_price;
     private double total;

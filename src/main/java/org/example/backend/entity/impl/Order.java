@@ -1,14 +1,13 @@
 package org.example.backend.entity.impl;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.backend.entity.SuperEntity;
 
 import java.io.Serializable;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,5 +20,9 @@ public class Order implements SuperEntity {
     private String date;
     private double discount_value;
     private double sub_total;
-    private String customer_id;
+    @ManyToOne
+    @JoinColumn(name = "customer_id",nullable = false)
+    private Customer customer_id;
+    @OneToMany(mappedBy = "order_id")
+    private List<OrderDetail> orderDetails;
 }
