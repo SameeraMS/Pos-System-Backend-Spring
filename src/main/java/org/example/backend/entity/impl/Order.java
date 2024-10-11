@@ -23,6 +23,6 @@ public class Order implements SuperEntity {
     @ManyToOne
     @JoinColumn(name = "customer_id",nullable = false)
     private Customer customer_id;
-    @OneToMany(mappedBy = "order_id")
+    @OneToMany(mappedBy = "order_id", cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.EAGER)
     private List<OrderDetail> orderDetails;
 }

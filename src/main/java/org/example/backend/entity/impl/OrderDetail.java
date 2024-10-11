@@ -6,22 +6,22 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.backend.entity.SuperEntity;
 
-import java.io.Serializable;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Entity
 @Table(name = "order_details")
+@IdClass(OrderIdDetails.class)
 public class OrderDetail implements SuperEntity {
     @Id
-    private String id;
     @ManyToOne
     @JoinColumn(name = "order_id",nullable = false)
-    private Order order_id;
+    private Order order;
+
+    @Id
     @ManyToOne
     @JoinColumn(name = "item_id",nullable = false)
-    private Item item_id;
+    private Item item;
     private int qty;
     private double unit_price;
     private double total;

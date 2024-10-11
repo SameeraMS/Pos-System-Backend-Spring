@@ -14,8 +14,9 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
-
-//presentation/controller layer eken pita configs
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.util.Enumeration;
 
 @Configuration
 @EnableJpaRepositories(basePackages = "org.example.backend.dao")
