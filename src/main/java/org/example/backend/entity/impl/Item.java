@@ -23,6 +23,6 @@ public class Item implements SuperEntity {
     private String description;
     private double unitPrice;
     private int qtyOnHand;
-    @OneToMany(mappedBy = "item_id")
+    @OneToMany(mappedBy = "item")
     private List<OrderDetail> orderDetails;
 }

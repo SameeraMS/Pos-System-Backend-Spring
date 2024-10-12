@@ -12,8 +12,8 @@ import java.util.Objects;
 @NoArgsConstructor
 @Data
 public class OrderIdDetails implements SuperEntity {
-    private Long order;
-    private Long item;
+    private String order;
+    private String item;
 
     @Override
     public boolean equals(Object o) {

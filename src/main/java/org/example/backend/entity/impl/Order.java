@@ -22,7 +22,7 @@ public class Order implements SuperEntity {
     private double sub_total;
     @ManyToOne
     @JoinColumn(name = "customer_id",nullable = false)
-    private Customer customer_id;
-    @OneToMany(mappedBy = "order_id", cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.EAGER)
+    private Customer customer;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.EAGER)
     private List<OrderDetail> orderDetails;
 }
