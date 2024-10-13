@@ -1,6 +1,7 @@
 package org.example.backend.service.impl;
 
 import org.example.backend.dao.CustomerDao;
+import org.example.backend.dto.CustomerStatus;
 import org.example.backend.dto.impl.CustomerDTO;
 import org.example.backend.entity.impl.Customer;
 import org.example.backend.exception.CustomerNotFoundException;
@@ -32,7 +33,14 @@ public class CustomerServiceIMPL implements CustomerService {
 
     @Override
     public void updateCustomer(String id, CustomerDTO customerDTO) {
-
+            Customer customer = customerDao.getReferenceById(id);
+            if (customer == null) {
+                throw new CustomerNotFoundException("Customer not found");
+            }
+            customer.setName(customerDTO.getName());
+            customer.setContact(customerDTO.getContact());
+            customer.setAddress(customerDTO.getAddress());
+            customerDao.save(customer);
     }
 
     @Override
@@ -45,7 +53,7 @@ public class CustomerServiceIMPL implements CustomerService {
     }
 
     @Override
-    public CustomerDTO getSelectedCustomer(String id) {
+    public CustomerStatus getSelectedCustomer(String id) {
         Optional<Customer> customer = customerDao.findById(id);
         if (customer.isPresent()) {
             return mapping.toCustomerDTO(customerDao.getReferenceById(id));
