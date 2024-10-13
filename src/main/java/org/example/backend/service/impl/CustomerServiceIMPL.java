@@ -1,5 +1,8 @@
 package org.example.backend.service.impl;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import org.example.backend.dao.CustomerDao;
 import org.example.backend.dto.CustomerStatus;
 import org.example.backend.dto.impl.CustomerDTO;
@@ -22,6 +25,8 @@ public class CustomerServiceIMPL implements CustomerService {
     private CustomerDao customerDao;
     @Autowired
     private Mapping mapping;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public void saveCustomer(CustomerDTO customerDTO) {
@@ -65,5 +70,19 @@ public class CustomerServiceIMPL implements CustomerService {
     @Override
     public List<CustomerDTO> getAllCustomers() {
         return mapping.toCustomerDTOList(customerDao.findAll());
+    }
+
+    public String generateCustomerId() {
+        String jpql = "SELECT c.id FROM Customer c ORDER BY c.id DESC LIMIT 1";
+        TypedQuery<String> query = entityManager.createQuery(jpql, String.class);
+
+        String maxCustomerId = query.getSingleResult();
+
+        if (maxCustomerId != null) {
+            int newCustomerId = Integer.parseInt(maxCustomerId.replace("C00-", "")) + 1;
+            return String.format("C00-%03d", newCustomerId);
+        } else {
+            return "C00-001";
+        }
     }
 }

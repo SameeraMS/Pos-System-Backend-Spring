@@ -1,5 +1,8 @@
 package org.example.backend.service.impl;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import org.example.backend.customStatusCodes.SelectedItemStatus;
 import org.example.backend.dao.ItemDao;
 import org.example.backend.dto.ItemStatus;
@@ -23,6 +26,8 @@ public class ItemServiceIMPL implements ItemService {
     private ItemDao itemDao;
     @Autowired
     private Mapping mapper;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public void saveItem(ItemDTO itemDTO) {
@@ -66,5 +71,17 @@ public class ItemServiceIMPL implements ItemService {
     @Override
     public List<ItemDTO> getAllItem() {
         return mapper.toItemDTOList(itemDao.findAll());
+    }
+
+    public String generateItemId() {
+        String jpql = "SELECT i.id FROM Item i ORDER BY i.id DESC LIMIT 1";
+        TypedQuery<String> query = entityManager.createQuery(jpql, String.class);
+        String maxItemId = query.getSingleResult();
+        if (maxItemId != null) {
+            int newItemId = Integer.parseInt(maxItemId.replace("I00-", "")) + 1;
+            return String.format("I00-%03d", newItemId);
+        } else {
+            return "I00-001";
+        }
     }
 }

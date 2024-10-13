@@ -3,6 +3,7 @@ package org.example.backend.service.impl;
 import org.example.backend.dao.ItemDao;
 import org.example.backend.dao.OrderDetailsDao;
 import org.example.backend.dto.impl.OrderDetailDTO;
+import org.example.backend.entity.impl.Item;
 import org.example.backend.entity.impl.OrderDetail;
 import org.example.backend.exception.DataPersistException;
 import org.example.backend.service.OrderDetailsService;
@@ -31,7 +32,13 @@ public class OrderDetailServiceIMPL implements OrderDetailsService{
             throw new DataPersistException("Order Detail not saved");
         }
 
+        String itemId = orderDetailDTO.getItem_id();
+        int qty = orderDetailDTO.getQty();
 
+        Item fetcheItem = itemDao.getReferenceById(itemId);
+        fetcheItem.setQtyOnHand(fetcheItem.getQtyOnHand() - qty);
+
+        itemDao.save(fetcheItem);
     }
 
     @Override

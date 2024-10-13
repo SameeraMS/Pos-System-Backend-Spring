@@ -1,7 +1,5 @@
 package org.example.backend;
 
-import jakarta.servlet.MultipartConfigElement;
-import jakarta.servlet.ServletRegistration;
 import org.example.backend.config.WebAppConfig;
 import org.example.backend.config.WebAppRootConfig;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;

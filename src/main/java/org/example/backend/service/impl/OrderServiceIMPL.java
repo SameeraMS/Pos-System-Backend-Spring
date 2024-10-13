@@ -1,5 +1,8 @@
 package org.example.backend.service.impl;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import org.example.backend.customStatusCodes.SelectedOrderStatus;
 import org.example.backend.dao.ItemDao;
 import org.example.backend.dao.OrderDao;
@@ -24,6 +27,8 @@ public class OrderServiceIMPL implements OrderService {
     private OrderDao orderDao;
     @Autowired
     private Mapping mapper;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public void saveOrder(OrderDTO orderDTO) {
@@ -50,8 +55,20 @@ public class OrderServiceIMPL implements OrderService {
     public OrderStatus getSelectedOrder(String orderId) {
         Order fetchedOrder = orderDao.getReferenceById(orderId);
         if (fetchedOrder == null) {
-            return new SelectedOrderStatus(1,"Order not found");
+            return new SelectedOrderStatus(1, "Order not found");
         }
         return mapper.toOrderDTO(fetchedOrder);
+    }
+
+    public String generateOrderId() {
+        String jpql = "SELECT o.id FROM Order o ORDER BY o.id DESC LIMIT 1";
+        TypedQuery<String> query = entityManager.createQuery(jpql, String.class);
+        String maxOrderId = query.getSingleResult();
+        if (maxOrderId != null) {
+            int newOrderId = Integer.parseInt(maxOrderId.replace("O00-", "")) + 1;
+            return String.format("O00-%03d", newOrderId);
+        } else {
+            return "O00-001";
+        }
     }
 }
