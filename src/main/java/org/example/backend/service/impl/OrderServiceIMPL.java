@@ -4,15 +4,12 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import org.example.backend.customStatusCodes.SelectedOrderStatus;
-import org.example.backend.dao.ItemDao;
 import org.example.backend.dao.OrderDao;
-import org.example.backend.dao.OrderDetailsDao;
 import org.example.backend.dto.OrderStatus;
 import org.example.backend.dto.impl.OrderDTO;
 import org.example.backend.entity.impl.Order;
 import org.example.backend.exception.DataPersistException;
 import org.example.backend.service.OrderService;
-import org.example.backend.util.AppUtil;
 import org.example.backend.util.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,7 +30,7 @@ public class OrderServiceIMPL implements OrderService {
     @Override
     public void saveOrder(OrderDTO orderDTO) {
         Order order = mapper.toOrderEntity(orderDTO);
-        order.setId(AppUtil.generateOrderId());
+        order.setId(generateOrderId());
         Order savedOrder = orderDao.save(order);
         if (savedOrder == null) {
             throw new DataPersistException("Failed to add order");
@@ -60,15 +57,19 @@ public class OrderServiceIMPL implements OrderService {
         return mapper.toOrderDTO(fetchedOrder);
     }
 
+    @Override
     public String generateOrderId() {
         String jpql = "SELECT o.id FROM Order o ORDER BY o.id DESC LIMIT 1";
         TypedQuery<String> query = entityManager.createQuery(jpql, String.class);
-        String maxOrderId = query.getSingleResult();
-        if (maxOrderId != null) {
-            int newOrderId = Integer.parseInt(maxOrderId.replace("O00-", "")) + 1;
-            return String.format("O00-%03d", newOrderId);
-        } else {
+
+        query.setMaxResults(1);
+        String maxOrderId = null;
+        try {
+            maxOrderId = query.getSingleResult();
+        } catch (jakarta.persistence.NoResultException e) {
             return "O00-001";
         }
+        int newOrderId = Integer.parseInt(maxOrderId.replace("O00-", "")) + 1;
+        return String.format("O00-%03d", newOrderId);
     }
 }

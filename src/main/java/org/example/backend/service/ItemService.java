@@ -11,4 +11,5 @@ public interface ItemService {
     void deleteItem(String id);
     ItemStatus getSelectedItem(String id);
     List<ItemDTO> getAllItem();
+    String generateItemId();
 }

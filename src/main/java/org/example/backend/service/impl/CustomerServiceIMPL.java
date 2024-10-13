@@ -30,6 +30,7 @@ public class CustomerServiceIMPL implements CustomerService {
 
     @Override
     public void saveCustomer(CustomerDTO customerDTO) {
+        customerDTO.setId(generateCustomerId());
         Customer savedCustomer = customerDao.save(mapping.toCustomerEntity(customerDTO));
         if (savedCustomer == null) {
             throw new DataPersistException("Customer not saved");
@@ -72,17 +73,21 @@ public class CustomerServiceIMPL implements CustomerService {
         return mapping.toCustomerDTOList(customerDao.findAll());
     }
 
+    @Override
     public String generateCustomerId() {
-        String jpql = "SELECT c.id FROM Customer c ORDER BY c.id DESC LIMIT 1";
+        String jpql = "SELECT c.id FROM Customer c ORDER BY c.id DESC";
         TypedQuery<String> query = entityManager.createQuery(jpql, String.class);
 
-        String maxCustomerId = query.getSingleResult();
+        query.setMaxResults(1);
 
-        if (maxCustomerId != null) {
-            int newCustomerId = Integer.parseInt(maxCustomerId.replace("C00-", "")) + 1;
-            return String.format("C00-%03d", newCustomerId);
-        } else {
+        String maxCustomerId = null;
+        try {
+            maxCustomerId = query.getSingleResult();
+        } catch (jakarta.persistence.NoResultException e) {
             return "C00-001";
         }
+
+        int newCustomerId = Integer.parseInt(maxCustomerId.replace("C00-", "")) + 1;
+        return String.format("C00-%03d", newCustomerId);
     }
 }

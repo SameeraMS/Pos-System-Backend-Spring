@@ -11,4 +11,5 @@ public interface CustomerService {
     void deleteCustomer(String id);
     CustomerStatus getSelectedCustomer(String id);
     List<CustomerDTO> getAllCustomers();
+    String generateCustomerId();
 }

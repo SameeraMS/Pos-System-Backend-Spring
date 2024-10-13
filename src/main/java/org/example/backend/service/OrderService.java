@@ -9,4 +9,5 @@ public interface OrderService {
     void saveOrder(OrderDTO orderDTO);
     List<OrderDTO> getAllOrders();
     OrderStatus getSelectedOrder(String orderId);
+    String generateOrderId();
 }

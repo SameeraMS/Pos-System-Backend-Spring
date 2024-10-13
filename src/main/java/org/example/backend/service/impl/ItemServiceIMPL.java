@@ -11,7 +11,6 @@ import org.example.backend.entity.impl.Item;
 import org.example.backend.exception.DataPersistException;
 import org.example.backend.exception.ItemNotFoundException;
 import org.example.backend.service.ItemService;
-import org.example.backend.util.AppUtil;
 import org.example.backend.util.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,7 +30,7 @@ public class ItemServiceIMPL implements ItemService {
 
     @Override
     public void saveItem(ItemDTO itemDTO) {
-        itemDTO.setId(AppUtil.generateItemId());
+        itemDTO.setId(generateItemId());
         Item savedItem = itemDao.save(mapper.toItemEntity(itemDTO));
         if (savedItem == null) {
             throw new DataPersistException("Failed to add item");
@@ -73,15 +72,21 @@ public class ItemServiceIMPL implements ItemService {
         return mapper.toItemDTOList(itemDao.findAll());
     }
 
+    @Override
     public String generateItemId() {
-        String jpql = "SELECT i.id FROM Item i ORDER BY i.id DESC LIMIT 1";
+        String jpql = "SELECT i.id FROM Item i ORDER BY i.id DESC";
         TypedQuery<String> query = entityManager.createQuery(jpql, String.class);
-        String maxItemId = query.getSingleResult();
-        if (maxItemId != null) {
-            int newItemId = Integer.parseInt(maxItemId.replace("I00-", "")) + 1;
-            return String.format("I00-%03d", newItemId);
-        } else {
+
+        query.setMaxResults(1);
+
+        String maxItemId = null;
+        try {
+            maxItemId = query.getSingleResult();
+        } catch (jakarta.persistence.NoResultException e) {
             return "I00-001";
         }
+
+        int newItemId = Integer.parseInt(maxItemId.replace("I00-", "")) + 1;
+        return String.format("I00-%03d", newItemId);
     }
 }
