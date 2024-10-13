@@ -3,6 +3,7 @@ package org.example.backend.util;
 import org.example.backend.dto.impl.CustomerDTO;
 import org.example.backend.dto.impl.ItemDTO;
 import org.example.backend.dto.impl.OrderDTO;
+import org.example.backend.dto.impl.OrderDetailDTO;
 import org.example.backend.entity.impl.Customer;
 import org.example.backend.entity.impl.Item;
 import org.example.backend.entity.impl.Order;
@@ -60,15 +61,15 @@ public class Mapping {
 
 
     //for order detail mapping
-    public OrderDetail toOrderDetailEntity(OrderDTO orderDTO) {
-        return modelMapper.map(orderDTO, OrderDetail.class);
+    public OrderDetail toOrderDetailEntity(OrderDetailDTO orderDetailDTO) {
+        return modelMapper.map(orderDetailDTO, OrderDetail.class);
     }
 
-    public OrderDTO toOrderDetailDTO(OrderDetail orderDetail) {
-        return modelMapper.map(orderDetail, OrderDTO.class);
+    public OrderDetailDTO toOrderDetailDTO(OrderDetail orderDetail) {
+        return modelMapper.map(orderDetail, OrderDetailDTO.class);
     }
 
-    public List<OrderDTO> toOrderDetailDTOList(List<OrderDetail> orderDetails) {
+    public List<OrderDetailDTO> toOrderDetailDTOList(List<OrderDetail> orderDetails) {
         return orderDetails.stream().map(this::toOrderDetailDTO).toList();
     }
 
