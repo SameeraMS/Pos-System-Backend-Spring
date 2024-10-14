@@ -1,5 +1,8 @@
 package org.example.backend.service.impl;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import org.example.backend.dao.ItemDao;
 import org.example.backend.dao.OrderDetailsDao;
 import org.example.backend.dto.impl.OrderDetailDTO;
@@ -13,8 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
 @Service
 @Transactional
 public class OrderDetailServiceIMPL implements OrderDetailsService{
@@ -24,13 +27,12 @@ public class OrderDetailServiceIMPL implements OrderDetailsService{
     private OrderDetailsDao orderDetailsDao;
     @Autowired
     private Mapping mapping;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public void saveOrderDetail(OrderDetailDTO orderDetailDTO) {
         OrderDetail savedOrderDetail = orderDetailsDao.save(mapping.toOrderDetailEntity(orderDetailDTO));
-        if (savedOrderDetail == null) {
-            throw new DataPersistException("Order Detail not saved");
-        }
 
         String itemId = orderDetailDTO.getItem_id();
         int qty = orderDetailDTO.getQty();
@@ -38,17 +40,26 @@ public class OrderDetailServiceIMPL implements OrderDetailsService{
         Item fetcheItem = itemDao.getReferenceById(itemId);
         fetcheItem.setQtyOnHand(fetcheItem.getQtyOnHand() - qty);
 
-        itemDao.save(fetcheItem);
+        Item savedItem = itemDao.save(fetcheItem);
+
+        if (savedOrderDetail == null || savedItem == null) {
+            throw new DataPersistException("Order Detail not saved");
+        }
     }
 
     @Override
     public List<OrderDetailDTO> getOrderDetails(String orderId) {
-        List<OrderDetail> allDetails = orderDetailsDao.findAllById(Collections.singleton(orderId));
-        List<OrderDetailDTO> orderDetailDTOS = new ArrayList<>();
+        String jpql = "SELECT od FROM OrderDetail od WHERE od.order.id = :orderId";
 
-        allDetails.forEach(orderDetail -> {
-            orderDetailDTOS.add(mapping.toOrderDetailDTO(orderDetail));
-        });
-        return orderDetailDTOS;
+        TypedQuery<OrderDetail> query = entityManager.createQuery(jpql, OrderDetail.class);
+        query.setParameter("orderId", orderId);
+
+        List<OrderDetail> orderDetails = query.getResultList();
+
+        List<OrderDetailDTO> orderDetailDTOs = new ArrayList<>();
+        for (OrderDetail od : orderDetails) {
+            orderDetailDTOs.add(new OrderDetailDTO(od.getOrder().getId(), od.getItem().getId(), od.getQty(), od.getUnit_price(), od.getTotal()));
+        }
+        return orderDetailDTOs;
     }
 }
