@@ -4,12 +4,16 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import org.example.backend.dao.ItemDao;
+import org.example.backend.dao.OrderDao;
 import org.example.backend.dao.OrderDetailsDao;
+import org.example.backend.dto.OrderStatus;
 import org.example.backend.dto.impl.OrderDetailDTO;
 import org.example.backend.entity.impl.Item;
+import org.example.backend.entity.impl.Order;
 import org.example.backend.entity.impl.OrderDetail;
 import org.example.backend.exception.DataPersistException;
 import org.example.backend.service.OrderDetailsService;
+import org.example.backend.service.OrderService;
 import org.example.backend.util.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +28,8 @@ public class OrderDetailServiceIMPL implements OrderDetailsService{
     @Autowired
     private ItemDao itemDao;
     @Autowired
+    private OrderDao orderDao;
+    @Autowired
     private OrderDetailsDao orderDetailsDao;
     @Autowired
     private Mapping mapping;
@@ -32,7 +38,13 @@ public class OrderDetailServiceIMPL implements OrderDetailsService{
 
     @Override
     public void saveOrderDetail(OrderDetailDTO orderDetailDTO) {
-        OrderDetail savedOrderDetail = orderDetailsDao.save(mapping.toOrderDetailEntity(orderDetailDTO));
+        OrderDetail orderDetail = mapping.toOrderDetailEntity(orderDetailDTO);
+        Order selectedOrder = orderDao.getReferenceById(orderDetailDTO.getOrder_id());
+        Item selectedItem = itemDao.getReferenceById(orderDetailDTO.getItem_id());
+        orderDetail.setOrder(selectedOrder);
+        orderDetail.setItem(selectedItem);
+
+        OrderDetail savedOrderDetail = orderDetailsDao.save(orderDetail);
 
         String itemId = orderDetailDTO.getItem_id();
         int qty = orderDetailDTO.getQty();

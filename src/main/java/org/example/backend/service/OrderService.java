@@ -10,4 +10,5 @@ public interface OrderService {
     List<OrderDTO> getAllOrders();
     OrderStatus getSelectedOrder(String orderId);
     String generateOrderId();
+    List<OrderDTO> searchByOrderId(String id);
 }

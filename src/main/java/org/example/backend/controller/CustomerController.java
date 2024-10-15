@@ -1,6 +1,7 @@
 package org.example.backend.controller;
 
 
+import org.example.backend.dto.CustomerStatus;
 import org.example.backend.dto.impl.CustomerDTO;
 import org.example.backend.exception.CustomerNotFoundException;
 import org.example.backend.exception.DataPersistException;
@@ -58,6 +59,11 @@ public class CustomerController {
     public List<CustomerDTO> getCustomer(@PathVariable("propertyId") String propertyId) {
         return customerService.searchByContact(propertyId);
 
+    }
+
+    @GetMapping(value = "/search/{propertyId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public CustomerStatus getSelectedCustomer(@PathVariable("propertyId") String propertyId) {
+        return customerService.getSelectedCustomer(propertyId);
     }
 
     @PutMapping(value = "/{propertyId}",consumes = MediaType.APPLICATION_JSON_VALUE)

@@ -48,11 +48,11 @@ public class Mapping {
 
     //for order mapping
     public Order toOrderEntity(OrderDTO orderDTO) {
-        return modelMapper.map(orderDTO, Order.class);
+        return new Order(orderDTO.getId(), orderDTO.getDate(), orderDTO.getDiscount_value(), orderDTO.getSub_total(), null,null);
     }
 
     public OrderDTO toOrderDTO(Order order) {
-        return modelMapper.map(order, OrderDTO.class);
+        return new OrderDTO(order.getId(), order.getDate(), order.getDiscount_value(), order.getSub_total(), order.getCustomer().getId());
     }
 
     public List<OrderDTO> toOrderDTOList(List<Order> orders) {
@@ -62,11 +62,11 @@ public class Mapping {
 
     //for order detail mapping
     public OrderDetail toOrderDetailEntity(OrderDetailDTO orderDetailDTO) {
-        return modelMapper.map(orderDetailDTO, OrderDetail.class);
+        return new OrderDetail(null, null, orderDetailDTO.getQty(), orderDetailDTO.getUnit_price(), orderDetailDTO.getTotal());
     }
 
     public OrderDetailDTO toOrderDetailDTO(OrderDetail orderDetail) {
-        return modelMapper.map(orderDetail, OrderDetailDTO.class);
+        return new OrderDetailDTO(orderDetail.getOrder().getId(), orderDetail.getItem().getId(), orderDetail.getQty(), orderDetail.getUnit_price(), orderDetail.getTotal());
     }
 
     public List<OrderDetailDTO> toOrderDetailDTOList(List<OrderDetail> orderDetails) {

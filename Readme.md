@@ -1,7 +1,7 @@
 <h1>Java-Spring POS System Backend</h1>
 
 <h3>API Documentation :</h3>
-https://documenter.getpostman.com/view/36188605/2sAXjJ4sBa
+https://documenter.getpostman.com/view/36188605/2sAXxTdWoQ
 
 <h3>Java-Spring POS System Frontend</h3>
 https://github.com/SameeraMS/Pos-System-Frontend-Spring.git
