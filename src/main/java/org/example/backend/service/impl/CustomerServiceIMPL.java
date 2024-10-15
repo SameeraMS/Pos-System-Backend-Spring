@@ -90,4 +90,17 @@ public class CustomerServiceIMPL implements CustomerService {
         int newCustomerId = Integer.parseInt(maxCustomerId.replace("C00-", "")) + 1;
         return String.format("C00-%03d", newCustomerId);
     }
+
+    @Override
+    public List<Customer> searchByContact(String value) {
+        String jpql = "SELECT c FROM Customer c WHERE c.contact LIKE :contact";
+
+        TypedQuery<Customer> query = entityManager.createQuery(jpql, Customer.class);
+        query.setParameter("contact", value + "%");
+
+        List<Customer> customers = query.getResultList();
+
+        return customers;
+    }
+
 }
