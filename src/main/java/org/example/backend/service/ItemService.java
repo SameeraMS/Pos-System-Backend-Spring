@@ -12,4 +12,5 @@ public interface ItemService {
     ItemStatus getSelectedItem(String id);
     List<ItemDTO> getAllItem();
     String generateItemId();
+    List<ItemDTO> searchByItemCode(String newItemCode);
 }

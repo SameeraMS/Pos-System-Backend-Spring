@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -92,15 +93,21 @@ public class CustomerServiceIMPL implements CustomerService {
     }
 
     @Override
-    public List<Customer> searchByContact(String value) {
+    public List<CustomerDTO> searchByContact(String value) {
         String jpql = "SELECT c FROM Customer c WHERE c.contact LIKE :contact";
 
         TypedQuery<Customer> query = entityManager.createQuery(jpql, Customer.class);
         query.setParameter("contact", value + "%");
 
         List<Customer> customers = query.getResultList();
+        List<CustomerDTO> customerDTOS = new ArrayList<>();
 
-        return customers;
+        customers.forEach(customer -> {
+            customerDTOS.add(mapping.toCustomerDTO(customer));
+        });
+
+        return customerDTOS;
+
     }
 
 }

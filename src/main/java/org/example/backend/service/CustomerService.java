@@ -13,5 +13,5 @@ public interface CustomerService {
     CustomerStatus getSelectedCustomer(String id);
     List<CustomerDTO> getAllCustomers();
     String generateCustomerId();
-    List<Customer> searchByContact(String value);
+    List<CustomerDTO> searchByContact(String value);
 }

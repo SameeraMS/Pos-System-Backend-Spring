@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -45,7 +46,7 @@ public class ItemServiceIMPL implements ItemService {
         }
         fetchedItem.setDescription(itemDTO.getDescription());
         fetchedItem.setUnitPrice(itemDTO.getUnitPrice());
-        fetchedItem.setQtyOnHand(itemDTO.getQty());
+        fetchedItem.setQty(itemDTO.getQty());
         itemDao.save(fetchedItem);
     }
 
@@ -89,4 +90,22 @@ public class ItemServiceIMPL implements ItemService {
         int newItemId = Integer.parseInt(maxItemId.replace("I00-", "")) + 1;
         return String.format("I00-%03d", newItemId);
     }
+
+    @Override
+    public List<ItemDTO> searchByItemCode(String newItemCode) {
+        String jpql = "SELECT i FROM Item i WHERE i.id LIKE :newItemCode";
+
+        TypedQuery<Item> query = entityManager.createQuery(jpql, Item.class);
+
+        query.setParameter("newItemCode", newItemCode + "%");
+
+        List<Item> items = query.getResultList();
+        List<ItemDTO> itemDTOS = new ArrayList<>();
+
+        items.forEach(item -> {
+            itemDTOS.add(mapper.toItemDTO(item));
+        });
+        return itemDTOS;
+    }
+
 }

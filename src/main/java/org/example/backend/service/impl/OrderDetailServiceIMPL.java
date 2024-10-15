@@ -38,7 +38,7 @@ public class OrderDetailServiceIMPL implements OrderDetailsService{
         int qty = orderDetailDTO.getQty();
 
         Item fetcheItem = itemDao.getReferenceById(itemId);
-        fetcheItem.setQtyOnHand(fetcheItem.getQtyOnHand() - qty);
+        fetcheItem.setQty(fetcheItem.getQty() - qty);
 
         Item savedItem = itemDao.save(fetcheItem);
 

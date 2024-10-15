@@ -1,13 +1,13 @@
 package org.example.backend.controller;
 
-import org.example.backend.customStatusCodes.SelectedCustomerStatus;
-import org.example.backend.dto.CustomerStatus;
+
 import org.example.backend.dto.impl.CustomerDTO;
 import org.example.backend.exception.CustomerNotFoundException;
 import org.example.backend.exception.DataPersistException;
 import org.example.backend.service.CustomerService;
 import org.example.backend.util.Regex;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,11 +31,18 @@ public class CustomerController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> addCustomer(@RequestBody CustomerDTO customerDto) {
         try {
-            customerService.saveCustomer(customerDto);
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            boolean isContactValid = customerDto.getContact().matches(Regex.CONTACT_REGEX);
+            if (isContactValid) {
+                customerService.saveCustomer(customerDto);
+                return new ResponseEntity<>(HttpStatus.CREATED);
+            } else {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
         } catch (DataPersistException e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (DataIntegrityViolationException e) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -48,18 +55,14 @@ public class CustomerController {
     }
 
     @GetMapping(value = "/{propertyId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CustomerStatus getCustomer(@PathVariable("propertyId") String propertyId) {
-        boolean isCustomerIdValid = Regex.CUSTOMER_ID_REGEX.matches(propertyId);
-        if (isCustomerIdValid) {
-            return customerService.getSelectedCustomer(propertyId);
-        }else{
-            return new SelectedCustomerStatus(1, "Customer Id Invalid");
-        }
+    public List<CustomerDTO> getCustomer(@PathVariable("propertyId") String propertyId) {
+        return customerService.searchByContact(propertyId);
+
     }
 
     @PutMapping(value = "/{propertyId}",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> updateCustomer(@PathVariable("propertyId") String propertyId, @RequestBody CustomerDTO customerDto) {
-        boolean isCustomerIdValid = Regex.CUSTOMER_ID_REGEX.matches(propertyId);
+        boolean isCustomerIdValid = propertyId.matches(Regex.CUSTOMER_ID_REGEX);
         try {
             if(isCustomerIdValid){
                 customerService.updateCustomer(propertyId, customerDto);
@@ -78,7 +81,7 @@ public class CustomerController {
 
     @DeleteMapping(value = "/{propertyId}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable("propertyId") String propertyId) {
-        boolean isCustomerIdValid = Regex.CUSTOMER_ID_REGEX.matches(propertyId);
+        boolean isCustomerIdValid = propertyId.matches(Regex.CUSTOMER_ID_REGEX);
         try {
             if(isCustomerIdValid){
                 customerService.deleteCustomer(propertyId);

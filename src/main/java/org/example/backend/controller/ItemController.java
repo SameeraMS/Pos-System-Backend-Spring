@@ -1,7 +1,5 @@
 package org.example.backend.controller;
 
-import org.example.backend.customStatusCodes.SelectedItemStatus;
-import org.example.backend.dto.ItemStatus;
 import org.example.backend.dto.impl.ItemDTO;
 import org.example.backend.exception.DataPersistException;
 import org.example.backend.exception.ItemNotFoundException;
@@ -22,7 +20,7 @@ public class ItemController {
     @Autowired
     private ItemService itemService;
 
-    @GetMapping(value = "/nextId", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/nextId")
     public String generateItemId(){
         return itemService.generateItemId();
     }
@@ -48,18 +46,14 @@ public class ItemController {
     }
 
     @GetMapping(value = "/{propertyId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ItemStatus getItem(@PathVariable("propertyId") String propertyId){
-        boolean isItemIdValid = Regex.ITEM_ID_REGEX.matches(propertyId);
-        if (isItemIdValid){
-            return itemService.getSelectedItem(propertyId);
-        }else{
-            return new SelectedItemStatus(1, "Item Id Invalid");
-        }
+    public List<ItemDTO> getItem(@PathVariable("propertyId") String propertyId){
+        return itemService.searchByItemCode(propertyId);
+
     }
 
-    @PutMapping(value = "/{propertyId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{propertyId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> updateItem(@PathVariable("propertyId") String propertyId, @RequestBody ItemDTO itemDto){
-        boolean isItemIdValid = Regex.ITEM_ID_REGEX.matches(propertyId);
+        boolean isItemIdValid = propertyId.matches(Regex.ITEM_ID_REGEX);
         try{
             if(isItemIdValid){
                 itemService.updateItem(propertyId, itemDto);
@@ -78,7 +72,7 @@ public class ItemController {
 
     @DeleteMapping(value = "/{propertyId}")
     public ResponseEntity<Void> deleteItem(@PathVariable("propertyId") String propertyId){
-        boolean isItemIdValid = Regex.ITEM_ID_REGEX.matches(propertyId);
+        boolean isItemIdValid = propertyId.matches(Regex.ITEM_ID_REGEX);
         try{
             if(isItemIdValid){
                 itemService.deleteItem(propertyId);
