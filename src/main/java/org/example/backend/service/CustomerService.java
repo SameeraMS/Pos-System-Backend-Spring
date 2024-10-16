@@ -2,7 +2,6 @@ package org.example.backend.service;
 
 import org.example.backend.dto.CustomerStatus;
 import org.example.backend.dto.impl.CustomerDTO;
-import org.example.backend.entity.impl.Customer;
 
 import java.util.List;
 

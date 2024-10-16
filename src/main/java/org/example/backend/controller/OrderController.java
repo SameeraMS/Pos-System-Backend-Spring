@@ -3,6 +3,8 @@ package org.example.backend.controller;
 import org.example.backend.dto.impl.OrderDTO;
 import org.example.backend.exception.DataPersistException;
 import org.example.backend.service.OrderService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,6 +19,7 @@ import java.util.List;
 public class OrderController {
     @Autowired
     private OrderService orderService;
+    static Logger logger = LoggerFactory.getLogger(OrderController.class);
 
     @GetMapping(value = "/nextId")
     public String generateOrderId() {
@@ -41,9 +44,11 @@ public class OrderController {
            return new ResponseEntity<>(HttpStatus.CREATED);
        } catch (DataPersistException e) {
            e.printStackTrace();
+           logger.error("Faild with: ",e.getMessage());
            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
        } catch (Exception e) {
            e.printStackTrace();
+           logger.error("Faild with: ",e.getMessage());
            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
        }
 

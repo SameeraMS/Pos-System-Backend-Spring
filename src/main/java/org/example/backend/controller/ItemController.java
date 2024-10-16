@@ -5,6 +5,8 @@ import org.example.backend.exception.DataPersistException;
 import org.example.backend.exception.ItemNotFoundException;
 import org.example.backend.service.ItemService;
 import org.example.backend.util.Regex;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,6 +21,7 @@ import java.util.List;
 public class ItemController {
     @Autowired
     private ItemService itemService;
+    static Logger logger = LoggerFactory.getLogger(ItemController.class);
 
     @GetMapping(value = "/nextId")
     public String generateItemId(){
@@ -33,9 +36,11 @@ public class ItemController {
             return new ResponseEntity<>(HttpStatus.CREATED);
         }catch (DataPersistException e){
             e.printStackTrace();
+            logger.error("Faild with: ",e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }catch (Exception e){
             e.printStackTrace();
+            logger.error("Faild with: ",e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -59,13 +64,16 @@ public class ItemController {
                 itemService.updateItem(propertyId, itemDto);
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }else{
+                logger.error("Faild with item id : ",propertyId);
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
         }catch (ItemNotFoundException e){
             e.printStackTrace();
+            logger.error("Faild with: ",e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }catch (Exception e){
             e.printStackTrace();
+            logger.error("Faild with: ",e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -78,13 +86,16 @@ public class ItemController {
                 itemService.deleteItem(propertyId);
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }else{
+                logger.error("Faild with item id : ",propertyId);
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
         }catch (ItemNotFoundException e){
             e.printStackTrace();
+            logger.error("Faild with: ",e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }catch (Exception e){
             e.printStackTrace();
+            logger.error("Faild with: ",e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

@@ -22,7 +22,6 @@ import javax.sql.DataSource;
 public class WebAppRootConfig {
     @Bean
     public DataSource dataSource() {
-
         var dmds = new DriverManagerDataSource();
         dmds.setDriverClassName("com.mysql.cj.jdbc.Driver");
         dmds.setUrl("jdbc:mysql://localhost:3306/possystem?createDatabaseIfNotExist=true");

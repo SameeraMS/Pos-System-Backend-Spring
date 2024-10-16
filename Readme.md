@@ -50,6 +50,10 @@ Comprehensive logging strategy with appropriate logging levels.
     <br>Update and configure the Hibernate settings for MySQL. Ensure the correct JDBC URL, username, and password are set for your MySQL database.
   </li>
 
+  <li>Update Logger Configuration:
+    <br>Update the logger configuration for the application in logback.xml.
+  </li>
+
   <li>Build & Deploy:
     <br>Build the project using Maven.
     <br>Run the Spring application.

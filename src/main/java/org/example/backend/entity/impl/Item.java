@@ -9,7 +9,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.backend.entity.SuperEntity;
 
-import java.io.Serializable;
 import java.util.List;
 
 @AllArgsConstructor

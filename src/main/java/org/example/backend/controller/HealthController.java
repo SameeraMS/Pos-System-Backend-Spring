@@ -1,6 +1,5 @@
 package org.example.backend.controller;
 
-import org.example.backend.dao.OrderDetailsDao;
 import org.example.backend.dto.impl.OrderDetailDTO;
 import org.example.backend.service.OrderDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;

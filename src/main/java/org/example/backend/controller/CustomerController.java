@@ -7,6 +7,8 @@ import org.example.backend.exception.CustomerNotFoundException;
 import org.example.backend.exception.DataPersistException;
 import org.example.backend.service.CustomerService;
 import org.example.backend.util.Regex;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,7 @@ import java.util.List;
 public class CustomerController {
     @Autowired
     private CustomerService customerService;
+    static Logger logger = LoggerFactory.getLogger(CustomerController.class);
 
     @GetMapping(value = "/nextId")
     public String nextCustomerId() {
@@ -37,15 +40,19 @@ public class CustomerController {
                 customerService.saveCustomer(customerDto);
                 return new ResponseEntity<>(HttpStatus.CREATED);
             } else {
+                logger.error("Faild with contact: ",customerDto.getContact());
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
         } catch (DataPersistException e) {
             e.printStackTrace();
+            logger.error("Faild with: ",e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (DataIntegrityViolationException e) {
+            logger.error("Faild with: ",e.getMessage());
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error("Faild with: ",e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -74,13 +81,16 @@ public class CustomerController {
                 customerService.updateCustomer(propertyId, customerDto);
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }else{
+                logger.error("Faild with customer id: ",propertyId);
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
         }catch (CustomerNotFoundException | DataPersistException e){
             e.printStackTrace();
+            logger.error("Faild with: ",e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }catch (Exception e){
             e.printStackTrace();
+            logger.error("Faild with: ",e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -93,13 +103,16 @@ public class CustomerController {
                 customerService.deleteCustomer(propertyId);
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }else{
+                logger.error("Faild with customer id: ",propertyId);
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
         }catch (CustomerNotFoundException e){
             e.printStackTrace();
+            logger.error("Faild with: ",e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }catch (Exception e){
             e.printStackTrace();
+            logger.error("Faild with: ",e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

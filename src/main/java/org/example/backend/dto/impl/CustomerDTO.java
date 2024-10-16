@@ -1,12 +1,9 @@
 package org.example.backend.dto.impl;
 
-import jakarta.json.bind.annotation.JsonbProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.backend.dto.CustomerStatus;
-
-import java.io.Serializable;
 
 @AllArgsConstructor
 @NoArgsConstructor
